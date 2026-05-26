@@ -4,10 +4,12 @@ import { useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import { Upload, FileUp, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import ConvertDialog from "./convertDialog"
 
 export function DropZone() {
   const [isDragging, setIsDragging] = useState(false)
   const [files, setFiles] = useState<File[]>([])
+  const [open, setOpen] = useState(false)
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -37,8 +39,24 @@ export function DropZone() {
     setFiles((prev) => prev.filter((_, i) => i !== index))
   }, [])
 
+  const extensionCounts = files.reduce((acc, file) => {
+    const ext =
+      file.name.split(".").pop()?.toUpperCase() || "UNKNOWN"
+
+    acc[ext] = (acc[ext] || 0) + 1
+
+    return acc
+  }, {} as Record<string, number>)
+
   return (
     <div>
+      <ConvertDialog
+        open={open}
+        onOpenChange={setOpen}
+        files={files}
+      />
+
+      <h2 className="text-lg font-semibold text-foreground mb-4">Quick Convert</h2>
       <motion.div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -89,9 +107,19 @@ export function DropZone() {
           animate={{ opacity: 1, y: 0 }}
           className="mt-4 rounded-xl border border-border bg-card p-4"
         >
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center mb-3">
             <h3 className="font-medium text-foreground">Selected Files ({files.length})</h3>
-            <Button variant="ghost" size="sm" onClick={() => setFiles([])}>
+            <div className="ml-3 flex flex-wrap gap-2">
+              {Object.entries(extensionCounts).map(([ext, count]) => (
+                <div
+                  key={ext}
+                  className="rounded-full border border-white/10 px-3 py-1 text-xs font-medium text-red-500 backdrop-blur-md"
+                >
+                  {count} {ext}
+                </div>
+              ))}
+            </div>
+            <Button className="ml-auto" variant="ghost" size="sm" onClick={() => setFiles([])}>
               Clear all
             </Button>
           </div>
@@ -99,17 +127,17 @@ export function DropZone() {
             {files.map((file, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between rounded-lg bg-secondary/50 px-3 py-2"
-              >
+                className="flex items-center justify-between rounded-lg bg-secondary/50 px-3 py-2">
                 <div className="flex items-center gap-3">
                   <FileUp className="h-4 w-4 text-primary" />
                   <div>
-                    <p className="text-sm font-medium text-foreground truncate max-w-[200px]">
+                    <p className="text-sm font-medium text-foreground truncate max-w-50">
                       {file.name}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       {(file.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
+                    </span>
+                    <span className="ml-1 inline text-red-500 text-xs">{file.name.split(".").pop() || ""}</span>
                   </div>
                 </div>
                 <button
@@ -122,11 +150,14 @@ export function DropZone() {
               </div>
             ))}
           </div>
-          <Button className="w-full mt-4 glow-primary">
-            Process {files.length} {files.length === 1 ? "File" : "Files"}
+          <Button className="w-full mt-4 glow-primary" onClick={()=>{
+            setOpen(true),
+            files
+            }}>
+            Convert {files.length} {files.length === 1 ? "File" : "Files"}
           </Button>
         </motion.div>
       )}
     </div>
-  )
-}
+    )
+  }

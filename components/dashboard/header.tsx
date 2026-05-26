@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import {Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import { Badge } from "@/components/ui/badge"
 
+
 interface DashboardHeaderProps {
   onMenuClick: () => void
 }
@@ -85,9 +86,8 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
 
         {/* User Menu */}
         <Show when="signed-out">
-          <SignInButton />
           <SignUpButton>
-            <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+            <button className="text-xs cursor-pointer">
               Sign Up
             </button>
           </SignUpButton>

@@ -4,6 +4,7 @@ import { HardDrive } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { useEffect, useState } from "react"
 
+
 export function StorageCard() {
   const [usedGB, setUsedGB] = useState("0")
   const [quotaGB, setQuotaGB] = useState("0")
