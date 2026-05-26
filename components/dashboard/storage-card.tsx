@@ -2,11 +2,37 @@
 
 import { HardDrive } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
+import { useEffect, useState } from "react"
 
 export function StorageCard() {
-  const usedStorage = 2.4 // GB
-  const totalStorage = 5 // GB
-  const percentage = (usedStorage / totalStorage) * 100
+  const [usedGB, setUsedGB] = useState("0")
+  const [quotaGB, setQuotaGB] = useState("0")
+
+useEffect(() => {
+  const getStorage = async () => {
+    const estimate = await navigator.storage.estimate()
+
+    const used = estimate.usage || 0
+    const quota = estimate.quota || 0
+
+    const formatStorage = (bytes: number) => {
+      const gb = bytes / 1024 / 1024 / 1024
+      const mb = bytes / 1024 / 1024
+
+      return gb >= 1
+        ? `${gb.toFixed(1)} GB`
+        : `${mb.toFixed(0)} MB`
+    }
+
+    setUsedGB(formatStorage(used))
+    setQuotaGB(formatStorage(quota))
+  }
+
+  getStorage()
+}, [])
+
+
+  const percentage = (parseFloat(usedGB) / parseFloat(quotaGB)) * 100
 
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -24,12 +50,12 @@ export function StorageCard() {
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">Used</span>
           <span className="font-medium text-foreground">
-            {usedStorage} GB / {totalStorage} GB
+            {usedGB} / {quotaGB} GB
           </span>
         </div>
         <Progress value={percentage} className="h-2" />
         <p className="text-xs text-muted-foreground">
-          {(totalStorage - usedStorage).toFixed(1)} GB available
+          {(parseFloat(quotaGB) - parseFloat(usedGB)).toFixed(1)} GB available
         </p>
       </div>
 

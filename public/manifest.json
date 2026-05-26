@@ -2,7 +2,7 @@
   "name": "FileFlow",
   "short_name": "FileFlow",
   "description": "Offline File Processing App",
-  "start_url": "/",
+  "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",

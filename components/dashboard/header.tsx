@@ -4,14 +4,7 @@ import { useState, useEffect } from "react"
 import { Menu, Search, Bell, Wifi, WifiOff, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import {Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import { Badge } from "@/components/ui/badge"
 
 interface DashboardHeaderProps {
@@ -60,15 +53,14 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
       </div>
 
       {/* Right Side */}
-      <div className="flex items-center gap-3">
+      <div className="ml-auto flex items-center gap-3">
         {/* Online/Offline Status */}
         <Badge
           variant="outline"
-          className={`gap-1.5 ${
-            isOnline
+          className={`gap-1.5 ${isOnline
               ? "border-emerald-500/30 text-emerald-400"
               : "border-amber-500/30 text-amber-400"
-          }`}
+            }`}
         >
           {isOnline ? (
             <>
@@ -92,29 +84,17 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
         </Button>
 
         {/* User Menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20">
-                <User className="h-4 w-4 text-primary" />
-              </div>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <div className="flex flex-col">
-                <span className="font-medium">John Doe</span>
-                <span className="text-xs text-muted-foreground">john@example.com</span>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">Sign out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Show when="signed-out">
+          <SignInButton />
+          <SignUpButton>
+            <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+              Sign Up
+            </button>
+          </SignUpButton>
+        </Show>
+        <Show when="signed-in">
+          <UserButton />
+        </Show>
       </div>
     </header>
   )

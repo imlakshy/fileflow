@@ -5,7 +5,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Menu, X, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+import {Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 
 
 const navItems = [
@@ -59,7 +59,8 @@ export function Navbar() {
                 Dashboard
               </Button>
             </Link>
-               <Show when="signed-out">
+
+            <Show when="signed-out">
               <SignInButton />
               <SignUpButton>
                 <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
